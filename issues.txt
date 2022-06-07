@@ -21,7 +21,7 @@ In the following, I attach two example models I have tried and their results.
 
 My repository can be found at:
 
-LINK
+https://github.com/mxagar/P1_Facial_Keypoints
 
 Could you please help me?
 
@@ -54,10 +54,22 @@ Net(
   (linear3): Linear(in_features=500, out_features=136, bias=True)
 )
 
-Number of parameters: 20416812
-Xavier initialization
-criterion = nn.MSELoss()
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+- Number of parameters: 20416812
+- Xavier initialization
+- criterion = nn.MSELoss()
+- optimizer = optim.Adam(net.parameters(), lr=0.001)
+
+Training output:
+
+Epoch: 1, Training Loss: 0.020920200698434928, Validation Loss: 0.020428773799499908
+Epoch: 2, Training Loss: 0.020777514237740494, Validation Loss: 0.020857440999576024
+Epoch: 3, Training Loss: 0.020643692263490818, Validation Loss: 0.021000844859457635
+Epoch: 4, Training Loss: 0.02084479694900865, Validation Loss: 0.01977874156716582
+...
+Epoch: 28, Training Loss: 0.021002676878135236, Validation Loss: 0.01979653277954498
+Epoch: 29, Training Loss: 0.02087379113950184, Validation Loss: 0.01936164227398959
+Epoch: 30, Training Loss: 0.02093802300372749, Validation Loss: 0.019763932057789393
+Finished Training!
 
 
 ### Model 2
@@ -78,10 +90,12 @@ Net(
   (fc3): Linear(in_features=1024, out_features=136, bias=True)
 )
 
-Number of parameters: 48673896
-Xavier initialization
-criterion = nn.SmoothL1Loss()
-optimizer = optim.Adam(net.parameters(), lr=0.0003)
+- Number of parameters: 48673896
+- Xavier initialization
+- criterion = nn.SmoothL1Loss()
+- optimizer = optim.Adam(net.parameters(), lr=0.0003)
+
+Training output:
 
 Epoch: 1, Batch: 10, Avg. Loss: 0.2838428482413292
 Epoch: 1, Batch: 20, Avg. Loss: 0.3179457187652588
