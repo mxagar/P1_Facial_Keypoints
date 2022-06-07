@@ -1,0 +1,94 @@
+Project 1: Face Keypoint Detection
+
+Hello,
+
+I am working on the Project #1 of the Computer Vision Nanodegree and I am stuck with the CNN model that needs to be defined in `models.py`. I have solved all the other coding exercises without any problems, but I cannot find an architecture that yields descreasing losses when trained.
+
+I have tried the architecture sketched in the paper by Agarwal et al. (NaimishNet, linked in the notebooks) and some other similar architectures, all based on LeNet, but I cannot manage to become decreasing losses.
+
+I have tried the usual recommendations to create different architectures, but all failed:
+
+- I have added dropout (p varying from 0.1 to 0.6)
+- I have added batch normalisation (in the first convolution layers)
+- I have decreased and increased the learning rate (always in a range of 0.0003 and 0.1)
+- I have applied Xavier initialization
+- I have used different loss functions: MSE, SmoothL1
+- I have increased the number of layers and parameters (all variations have between 20M - 40M trained parameters)
+
+I do a cross-validation run after every epoch and I store the history of the training and validation loss. In all cases, the loss values oscillate around their initial value.
+
+In the following, I attach two example models I have tried and their results.
+
+My repository can be found at:
+
+LINK
+
+Could you please help me?
+
+Thank you,
+Mikel
+
+8<---
+
+### Model 1
+
+Net(
+  (conv1): Conv2d(1, 32, kernel_size=(5, 5), stride=(1, 1))
+  (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv2): Conv2d(32, 64, kernel_size=(5, 5), stride=(1, 1))
+  (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv3): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1))
+  (pool3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv4): Conv2d(128, 256, kernel_size=(2, 2), stride=(1, 1))
+  (pool4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv5): Conv2d(256, 512, kernel_size=(1, 1), stride=(1, 1))
+  (pool5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (dropout5): Dropout(p=0.5, inplace=False)
+  (conv6): Conv2d(512, 1024, kernel_size=(1, 1), stride=(1, 1))
+  (pool6): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (dropout6): Dropout(p=0.5, inplace=False)
+  (linear1): Linear(in_features=9216, out_features=2000, bias=True)
+  (dropout7): Dropout(p=0.5, inplace=False)
+  (linear2): Linear(in_features=2000, out_features=500, bias=True)
+  (dropout8): Dropout(p=0.5, inplace=False)
+  (linear3): Linear(in_features=500, out_features=136, bias=True)
+)
+
+Number of parameters: 20416812
+Xavier initialization
+criterion = nn.MSELoss()
+optimizer = optim.Adam(net.parameters(), lr=0.001)
+
+
+### Model 2
+
+Net(
+  (conv1): Conv2d(1, 32, kernel_size=(5, 5), stride=(1, 1))
+  (pool1): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv2): Conv2d(32, 32, kernel_size=(3, 3), stride=(1, 1))
+  (pool2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1))
+  (pool3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (conv4): Conv2d(64, 64, kernel_size=(1, 1), stride=(1, 1))
+  (pool4): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  (fc1): Linear(in_features=10816, out_features=4096, bias=True)
+  (fc1_dropout): Dropout(p=0.5)
+  (fc2): Linear(in_features=4096, out_features=1024, bias=True)
+  (fc2_dropout): Dropout(p=0.5)
+  (fc3): Linear(in_features=1024, out_features=136, bias=True)
+)
+
+Number of parameters: 48673896
+Xavier initialization
+criterion = nn.SmoothL1Loss()
+optimizer = optim.Adam(net.parameters(), lr=0.0003)
+
+Epoch: 1, Batch: 10, Avg. Loss: 0.2838428482413292
+Epoch: 1, Batch: 20, Avg. Loss: 0.3179457187652588
+Epoch: 1, Batch: 30, Avg. Loss: 0.29876292794942855
+...
+Epoch: 39, Batch: 100, Avg. Loss: 0.31495306342840196
+Epoch: 39, Batch: 110, Avg. Loss: 0.27538169324398043
+Epoch: 39, Batch: 120, Avg. Loss: 0.2962385803461075
+Epoch: 39, Batch: 130, Avg. Loss: 0.29411947876214983
+
