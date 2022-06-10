@@ -5,3 +5,4 @@ __pycache__
 .ipynb_checkpoints
 workspace_utils.py
 saved_models/model_*
+bak
