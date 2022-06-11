@@ -1,3 +1,13 @@
+'''This module defines a convolutional neural network
+that maps 224x224 gray images to 68x2 facial keypoints
+with a regression.
+
+The architecture is a first proof-of concept.
+I certainly can be improved.
+
+Author: Mikel Sagardia
+Date: 2022-06-10
+'''
 ## TODO: define the convolutional neural network architecture
 
 import numpy as np
@@ -50,7 +60,7 @@ class Net(nn.Module):
         # input size: batch_size x 32 x 108 x 108
         # output size batch_size x 32 x 54 x 54 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 108/2 = 54
-        #self.pool2 = nn.MaxPool2d(2,2)
+        #self.pool = nn.MaxPool2d(2,2)
         #self.norm2 = nn.BatchNorm2d(32) # num channels; parameters learned!
         #self.dropout2 = nn.Dropout(p=np.round(drop_p,2))
 
@@ -65,7 +75,7 @@ class Net(nn.Module):
         # input size: batch_size x 64 x 52 x 52
         # output size: batch_size x 64 x 26 x 26 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 52/2 = 26
-        #self.pool3 = nn.MaxPool2d(2,2)
+        #self.pool = nn.MaxPool2d(2,2)
         #self.norm3 = nn.BatchNorm2d(64)
         self.dropout3 = nn.Dropout(p=np.round(drop_p,2))
 
@@ -81,7 +91,7 @@ class Net(nn.Module):
         # output size: batch_size x 64 x 12 x 12 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 24/2 = 12
         # 64 x 12 x 12 = 9216
-        #self.pool4 = nn.MaxPool2d(2,2)
+        #self.pool = nn.MaxPool2d(2,2)
         #self.norm4 = nn.BatchNorm2d(64)
         self.dropout4 = nn.Dropout(p=np.round(drop_p,2))
 
@@ -138,6 +148,7 @@ class Net(nn.Module):
     
         return x
 
+
 def initialize_weights(m):
     if isinstance(m, nn.Conv2d):
         #nn.init.kaiming_uniform_(m.weight.data,nonlinearity='relu')
@@ -151,6 +162,7 @@ def initialize_weights(m):
         #nn.init.kaiming_uniform_(m.weight.data)
         nn.init.xavier_uniform_(m.weight.data, gain=1.0)
         nn.init.constant_(m.bias.data, 0)
+
 
 def get_num_parameters(net):
     model_parameters = filter(lambda p: p.requires_grad, net.parameters())
