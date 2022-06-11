@@ -152,3 +152,7 @@ def initialize_weights(m):
         nn.init.xavier_uniform_(m.weight.data, gain=1.0)
         nn.init.constant_(m.bias.data, 0)
 
+def get_num_parameters(net):
+    model_parameters = filter(lambda p: p.requires_grad, net.parameters())
+    params = sum([np.prod(p.size()) for p in model_parameters])
+    return params
