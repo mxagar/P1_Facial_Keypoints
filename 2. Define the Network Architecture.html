@@ -17382,7 +17382,7 @@ torch.Size([10, 68, 2])
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>I have used the <code>MSELoss</code> loss function and the <code>Adam</code> optimization method. <code>MSELoss</code> is the squared L2 norm, i.e., the usual Euclidean distance function, which works well with regression problems as this one. The <code>Adam</code> optimization method has been shown to work well with noisy cost functions.</p>
+<p>I have used the <code>MSELoss</code> loss function and the <code>Adam</code> optimization method. <code>MSELoss</code> is the squared L2 norm, i.e., the usual Euclidean distance function, which works well with regression problems as this one. The <code>Adam</code> optimization method has been shown to work well in the case of local optiman (saddle points).</p>
 
 </div>
 </div>
@@ -17394,7 +17394,7 @@ torch.Size([10, 68, 2])
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>After reading the references paper by Argawal et al. (Naimishnet), I initially defined an architecture with six blocks of <code>Conv2d-&gt;MaxPool2d-&gt;BatchNorm2d-&gt;Dropout</code> followed by three blocks of <code>Linear-&gt;Dropout</code>. I trained it on the GPU and, unfortunatelly, the loss values oscillated around the initial value.</p>
-<p>After that, I tried several more simple models based also on the LeNet architecture (LeCun et al.). The final architecture has 4 convolutional layers followed by 2 linear layers; additionally, pooling and dropout are applied.</p>
+<p>After that, I tried several more simple models based also on the LeNet architecture (LeCun et al.). The final architecture has 4 convolutional layers followed by 2 linear layers; additionally, pooling and dropout are applied. It is a simpler architecture than the first one; the first one was probably an overkill that would lead to overfitting.</p>
 <p>In contrast to the first architecture, I chose kernels with odd sizes to have an anchor pixel and prevent aliasing.</p>
 <p>The issues I had during the refinement of the architecture are documented on this Forum thread:</p>
 <p><a href="https://knowledge.udacity.com/questions/857525?utm_campaign=ret_600_auto_ndxxx_knowledge-comment-created_na&amp;utm_source=blueshift&amp;utm_medium=email&amp;utm_content=ret_600_auto_ndxxx_knowledge-comment-created_na&amp;bsft_clkid=ea9922bc-9a05-4771-813e-3c72cdfaffda&amp;bsft_uid=e1cc408e-bb24-4f46-b0a7-52ea94ad0f82&amp;bsft_mid=856803a8-4ffd-43d1-914e-f1cc6acc1ea0&amp;bsft_eid=64e4ccff-21b0-44a8-abc6-a9081789abfc&amp;bsft_txnid=4495aa1c-aae5-4709-ba72-5d706cdf871b&amp;bsft_mime_type=html&amp;bsft_ek=2022-06-10T11%3A30%3A42Z&amp;bsft_aaid=8d7e276e-4a10-41b2-8868-423fe96dd6b2&amp;bsft_lx=1&amp;bsft_tv=1#858396">Project 1: Face Keypoint Detection - Losses Not Decreasing</a></p>
@@ -17409,7 +17409,7 @@ torch.Size([10, 68, 2])
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>I understand that the larger the <code>batch_size</code> the better the optimization, since the gradients refer in each step to a larger subset of samples; thus, the optimization steps are expected to be smoother. However, the memory available to process a batch limits the number of images we can pack into one. I tried bacth sies from 1 to 32 and left the original <code>batch_size = 10</code>, since it worked well.</p>
+<p>I tried bacth sies from 1 to 32 and left the original <code>batch_size = 10</code>, since it worked well. Larger <code>batch_sizes</code> arepossible if we have larger memories; also, larger <code>batch_sizes</code> increase the speed with which we train, but they have been shown to degrade the quality of generalization. Thus, we have a trae-off between speed and final accuracy.</p>
 <p>I tracked the training and validation losses. In the plot, we see an elbow around the epoch number 10; thus, training for 10 epochs would have resulted in a good enough model. The validation loss does not start increasing while the training loss decreases: that means we are not overfitting, i.e., we are not loosing generalization capabilities. Since I tracked the validation loss, I saved the model with the minimum validation loss.</p>
 
 </div>
