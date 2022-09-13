@@ -45,9 +45,7 @@ Table of contents:
   - [Overview and File Structure](#overview-and-file-structure)
     - [How to Use This](#how-to-use-this)
     - [Dependencies](#dependencies)
-  - [Face Detection and Facial Keypoint Regression Model](#face-detection-and-facial-keypoint-regression-model)
-  - [Dog Breed Classification with CNNs](#dog-breed-classification-with-cnns)
-  - [Putting Everything together: The Application](#putting-everything-together-the-application)
+  - [Face Detection and the Facial Keypoint Regression Model](#face-detection-and-the-facial-keypoint-regression-model)
   - [Improvements and Possible Extensions](#improvements-and-possible-extensions)
   - [Authorship](#authorship)
 
@@ -91,42 +89,26 @@ conda install pip
 pip install -r requirements.txt
 ```
 
-## Face Detection and Facial Keypoint Regression Model
+## Face Detection and the Facial Keypoint Regression Model
 
-The first step consists in the implementation of two functions using off-the-shelf libraries: 
+The final application can be broken down to two major steps: 
 
-1. `face_detector()`: given an image, it returns whether there is a human face in it or not.
-2. `dog_detector()`: given an image, it returns whether there is a dog in it or not.
+1. Face detection: given an image, the bounding boxes of the regions that contain human faces are returned.
+2. Facial landmark estimation: given a Region of Interest (ROI) which contains an image patch under one of the detected bounding boxes, the trained network performs a regression of the parametrized 68 points to adjust them to the face in the ROI.
 
-In order to implement the `face_detector()`, the [Haar cascades](https://en.wikipedia.org/wiki/Haar-like_feature) classifier from [OpenCV](https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html) is employed. This classifier applies several pre-determined filters in sequence on the target image to determine whether it contains a face. In addition to that, bounding boxes with the likeliest face regions are returned. Thus, `face_detector()` basically counts the number of face bounding boxes returned by the OpenCV API -- if there is at least one bounding box, the image contains a human face.
+In order to implement the face detection, the [Haar cascades](https://en.wikipedia.org/wiki/Haar-like_feature) classifier from [OpenCV](https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html) is employed. This classifier applies several pre-determined filters in sequence on the target image to determine whether it contains a face. In addition to that, bounding boxes with the likeliest face regions are returned.
 
-The function `dog_detector()`, on the other hand, leverages the pre-trained [VGG16](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg16.html) network. Since most of the available pre-trained networks (as this one) have been fit on the [ImageNet](https://www.image-net.org/) dataset, they map any image to the 1000 possible object classes from ImageNet; in particular, the range of class ids 151-268 are related to different dog breeds. Hence, the function `dog_detector()` basically infers the class of an image with VGG16 and checks that it is in the aforementioned range -- if so, we have the image of a dog.
-
-## Dog Breed Classification with CNNs
-
-Apart from detecting a dog/human image, we want to classify the dog breed. Unfortunately, the class ids 151-268 from ImageNet are not enough for our purpose. Therefore, we create a new model using the [dog dataset](https://s3-us-west-1.amazonaws.com/udacity-aind/dog-project/dogImages.zip), which contains 133 dog breeds. Two approaches are implemented:
-
-1. Custom CNN built from scratch.
-2. Transfer learning with a ResNet50.
-
-The first approach consists in a custom-defined CNN that follows the guidelines in the literature; it consists of 5 convolutional layers that repeat the basic formula `Convolution + BatchNorm + ReLU + MaxPool`, and a final sequence of three fully connected layers that map the feature maps of the fifth convolutional layer to the 133 class probabilities. The model has around 17 million parameters.
+The second step works with a custom-defined Convolutional Neural Network (CNN) that follows the guidelines in the literature; it consists of 4 convolutional layers that repeat the basic formula `Convolution (5x5 or 3x3) + ReLU + MaxPool`, and a final sequence of two fully connected layers that map the feature maps of the four convolutional layer to the `136 = 68 x 2` facial keypoint coordinates. Dropout is also applied in the last two convolutional layers and after every linear layer to prevent overfitting. The model has around 9.4 million parameters.
 
 ![CNN Model Summary](./images/cnn_model_summary.jpg)
 
-The second approach uses the pre-trained [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50) network as backbone; two fully connected layers are appended to the model to map its feature vectors to the 133 dog breed classes. ResNets are nice performing CNNs, since they can handle large amounts of layers (necessary to detect complex and relevant features), while still avoiding the vanishing gradient problem, which with other architectures worsens with the network depth. Only the weights of the fully connected layers are trained, which amount to 0.4M parameters.
+This basic network resembles [LeNet](https://en.wikipedia.org/wiki/LeNet), one of the first CNNs; despite its simplicity it achieves a considerable performance after short training times. Several straightforward modifications are worth trying, e.g.:
 
-Given the smaller number of the trained parameters, the second model can be trained in a considerably shorter time; additionally, since the ResNet50 backbone has correctly trained weights, it produces feature maps that lead to a better accuracy than the custom CNN.
+- The extension of the architecture with at least one more convolutional layer and a linear one.
+- The use of batch normalization to center weights, stabilize the training and avoid dropout in the convolutional layers.
+- The use of transfer learning with backbone models pre-trained on the [ImageNet](https://www.image-net.org/) dataset; e.g., [VGG16](https://pytorch.org/vision/main/models/generated/torchvision.models.vgg16.html), or even better, [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50).
 
-## Putting Everything together: The Application
-
-The final application is a simple combination of three functions:
-
-1. `face_detector()`
-2. `dog_detector()`
-3. The transfer learning model with the ResNet50 as backbone
-
-If an image contains a human face or a dog, it is passed to the transfer learning model to predict the dog breed that is most likely associated with the image; if we pass a human image, the model detects the dog breed that resembles to the face on the picture :smile:
-
+More improvements are briefly summarized in the next section.
 ## Improvements and Possible Extensions
 
 - [ ] Use data augmentation more extensively to improve generalization.
@@ -136,8 +118,8 @@ If an image contains a human face or a dog, it is passed to the transfer learnin
 - [ ] Try the [learning rate scheduler](https://pytorch.org/docs/stable/optim.html) for the from-scratch model training, since it seems to have a sub-optimal learning rate.
 - [ ] Try different (more complex) architectures:
   - [ ] More convolutional layers.
-  - [ ] Batch normalization to stabilize weights and avoid dropout in the convolutional layers.
-- [ ] Try transfer learning; an example of transfer learning using [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50) as backbone can be found in my side project on [dog breed classificaation](https://github.com/mxagar/deep-learning-v2-pytorch/tree/master/project-dog-classification).
+  - [ ] Batch normalization to center weights, stabilize training and avoid dropout in the convolutional layers.
+- [ ] Try transfer learning; an example of transfer learning using [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50) as backbone can be found in my side project on [dog breed classification](https://github.com/mxagar/deep-learning-v2-pytorch/tree/master/project-dog-classification).
 - [ ] Use randomness seeds and controlled weight initialization to allow reproducibility.
 - [ ] Create a web app with Flask. To that end, the code needs to be transformed for production (i.e., use OOP, logging, etc.)
 
