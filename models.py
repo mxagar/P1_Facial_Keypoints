@@ -51,7 +51,7 @@ class Net(nn.Module):
 
         ## Block 2
         # 32 input image channels
-        # 64 output channels/feature maps
+        # 32 output channels/feature maps
         # 5x5 square convolution kernel
         # input size: batch_size x 32 x 110 x 110
         # output size: batch_size x 32 x 220 x 220 (look formula in docu)
@@ -60,13 +60,12 @@ class Net(nn.Module):
         # input size: batch_size x 32 x 108 x 108
         # output size batch_size x 32 x 54 x 54 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 108/2 = 54
-        #self.pool = nn.MaxPool2d(2,2)
         #self.norm2 = nn.BatchNorm2d(32) # num channels; parameters learned!
         #self.dropout2 = nn.Dropout(p=np.round(drop_p,2))
 
         ## Block 3
-        # 64 input image channels
-        # 128 output channels/feature maps
+        # 32 input image channels
+        # 64 output channels/feature maps
         # 3x3 square convolution kernel
         # input size: batch_size x 32 x 54 x 54
         # output size: batch_size x 64 x 52 x 52 (look formula in docu)
@@ -75,14 +74,12 @@ class Net(nn.Module):
         # input size: batch_size x 64 x 52 x 52
         # output size: batch_size x 64 x 26 x 26 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 52/2 = 26
-        #self.pool = nn.MaxPool2d(2,2)
-        #self.norm3 = nn.BatchNorm2d(64)
         self.dropout3 = nn.Dropout(p=np.round(drop_p,2))
 
         ## Block 4
-        # 128 input image channels
-        # 256 output channels/feature maps
-        # 2x2 square convolution kernel
+        # 64 input image channels
+        # 64 output channels/feature maps
+        # 3x3 square convolution kernel
         # input size: batch_size x 64 x 26 x 26
         # output size: batch_size x 128 x 24 x 24 (look formula in docu)
         # (W-F)/S + 1 = (26-3)/1 + 1 = 24
@@ -91,9 +88,7 @@ class Net(nn.Module):
         # output size: batch_size x 64 x 12 x 12 (look formula in docu)
         # kernel_size=2, stride=2 -> W = W/2 = 24/2 = 12
         # 64 x 12 x 12 = 9216
-        #self.pool = nn.MaxPool2d(2,2)
-        #self.norm4 = nn.BatchNorm2d(64)
-        self.dropout4 = nn.Dropout(p=np.round(drop_p,2))
+         self.dropout4 = nn.Dropout(p=np.round(drop_p,2))
 
         # input features: batch_size x 64 x 12 x 12; batch_size x 9216
         self.linear1 = nn.Linear(9216,1000)
@@ -111,30 +106,21 @@ class Net(nn.Module):
         # Block 1
         x = self.pool(F.relu(self.conv1(x)))
         #x = self.norm1(x)
-        #x = self.dropout1(x)
-        #print(x.size())
 
         # Block 2
         x = self.pool(F.relu(self.conv2(x)))
         #x = self.norm2(x)
-        #x = self.dropout2(x)
-        #print(x.size())
 
         # Block 3
         x = self.pool(F.relu(self.conv3(x)))
-        #x = self.norm3(x)
         x = self.dropout3(x)
-        #print(x.size())
 
         # Block 4
         x = self.pool(F.relu(self.conv4(x)))
-        #x = self.norm4(x)
         x = self.dropout4(x)
-        #print(x.size())
 
         # Flatten: batch_size x 64 x 12 x 12; 64 x 12 x 12 -> (batch_size, 9216)
         x = x.view(x.size(0), -1)
-        #print(x.size())
         x = F.relu(self.linear1(x))
         x = self.dropout5(x)
 
