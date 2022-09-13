@@ -35,7 +35,7 @@ In short, the following is implemented:
 - The implementation of face detection using the [Haar cascades](https://en.wikipedia.org/wiki/Haar-like_feature) classifier from [OpenCV](https://docs.opencv.org/3.4/db/d28/tutorial_cascade_classifier.html).
 - Image in-painting of funny objects (e.g., glasses, etc.) by using the predicted facial landmarks.
 
-In summary, I think the project is a nice example of a computer vision application which leverages artifical neural networks; 
+In summary, I think the project is a nice example of a computer vision application which leverages artifical neural networks.
 
 *For the original project implementation instructions and evaluation overview, see the file [Instructions.md](Instructions.md); instead, this text focuses on more general explanations related to the methods used in the project.*
 
@@ -53,7 +53,7 @@ Table of contents:
 
 ## Overview and File Structure
 
-The project is mainly implemented in four notebooks that guide the project end-to-end and two python scripts; the latter consist of the data loader and model definition. Altogether, the folder contains the following files:
+The project is mainly implemented in four notebooks that guide the undertaking end-to-end and two python scripts; the latter consist of the data loader and model definition. Altogether, the folder contains the following files:
 
 ```
 1. Load and Visualize Data.ipynb                        # Dataset preprocessing an loader
@@ -73,9 +73,9 @@ requirements.txt                                        # Dependencies to be ins
 
 ### How to Use This
 
-The implementation has a research side-project character, thus most of the code is contained in enumerated Jupyter notebooks which should be executed in order and from start to end; note that the data loader and the model definition are in separate scripts imported in the notebooks.
+The implementation has a research side-project character, thus, most of the code is contained in enumerated Jupyter notebooks which should be executed in order and from start to end; note that the data loader and the model definition are imported in the notebooks from separate scripts.
 
-I you want to train the model, you should consider doing it on a machine with powerful GPUs, although that is not a necessary condition.
+I you want to train the model, you should consider doing it on a machine with (powerful) GPUs, although that is not a necessary condition.
 
 ### Dependencies
 
@@ -134,7 +134,10 @@ If an image contains a human face or a dog, it is passed to the transfer learnin
 - [ ] Use [Pytorch profiling](https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html).
 - [ ] Use `nn.Sequential` in order to be cleaner in the network definition.
 - [ ] Try the [learning rate scheduler](https://pytorch.org/docs/stable/optim.html) for the from-scratch model training, since it seems to have a sub-optimal learning rate.
-- [ ] Try different (more complex) architectures as well as transfer learning; an example of transfer learning using [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50) as backbone can be found in my side project []().
+- [ ] Try different (more complex) architectures:
+  - [ ] More convolutional layers.
+  - [ ] Batch normalization to stabilize weights and avoid dropout in the convolutional layers.
+- [ ] Try transfer learning; an example of transfer learning using [ResNet50](https://pytorch.org/vision/main/models/generated/torchvision.models.resnet50.html?highlight=resnet50#torchvision.models.resnet50) as backbone can be found in my side project on [dog breed classificaation](https://github.com/mxagar/deep-learning-v2-pytorch/tree/master/project-dog-classification).
 - [ ] Use randomness seeds and controlled weight initialization to allow reproducibility.
 - [ ] Create a web app with Flask. To that end, the code needs to be transformed for production (i.e., use OOP, logging, etc.)
 
